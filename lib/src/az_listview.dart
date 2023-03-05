@@ -5,6 +5,8 @@ import 'az_common.dart';
 import 'index_bar.dart';
 import 'suspension_view.dart';
 
+
+
 /// AzListView
 class AzListView extends StatefulWidget {
   AzListView({
@@ -110,6 +112,8 @@ class _AzListViewState extends State<AzListView> {
 
   String selectTag = '';
 
+  int cuttentIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -118,9 +122,10 @@ class _AzListViewState extends State<AzListView> {
     itemPositionsListener =
         widget.itemPositionsListener ?? ItemPositionsListener.create();
     dragListener.dragDetails.addListener(_valueChanged);
-    if (widget.indexBarOptions.selectItemDecoration != null) {
-      itemPositionsListener.itemPositions.addListener(_positionsChanged);
-    }
+    itemPositionsListener.itemPositions.addListener(_positionsChanged);
+
+    // if (widget.indexBarOptions.selectItemDecoration != null) {
+    // }
   }
 
   @override
@@ -171,7 +176,9 @@ class _AzListViewState extends State<AzListView> {
                   : min);
       int index = itemPosition.index;
       String tag = widget.data[index].getSuspensionTag();
+
       if (selectTag != tag) {
+      print('object $selectTag $tag');
         selectTag = tag;
         indexBarController.updateTagIndex(tag);
       }
@@ -185,7 +192,10 @@ class _AzListViewState extends State<AzListView> {
         SuspensionView(
           data: widget.data,
           itemCount: widget.itemCount,
-          itemBuilder: widget.itemBuilder,
+          itemBuilder: (c, i) {
+            cuttentIndex = i;
+            return  widget.itemBuilder(c, i);
+          },
           itemScrollController: itemScrollController,
           itemPositionsListener: itemPositionsListener,
           susItemBuilder: widget.susItemBuilder,
@@ -197,6 +207,7 @@ class _AzListViewState extends State<AzListView> {
         Align(
           alignment: widget.indexBarAlignment,
           child: IndexBar(
+            // tag: ,
             data: widget.indexBarData,
             width: widget.indexBarWidth,
             height: widget.indexBarHeight,

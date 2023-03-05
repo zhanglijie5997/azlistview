@@ -121,6 +121,8 @@ class _SuspensionViewState extends State<SuspensionView> {
         } else {
           index = 0;
         }
+        
+        // print('left:$left top:$top index:$index');
         return Positioned(
           left: left,
           top: top,

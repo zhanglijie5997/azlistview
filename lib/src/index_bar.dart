@@ -225,6 +225,7 @@ class IndexBarController {
 class IndexBar extends StatefulWidget {
   IndexBar({
     Key? key,
+    this.tag,
     this.data = kIndexBarData,
     this.width = kIndexBarWidth,
     this.height,
@@ -239,6 +240,8 @@ class IndexBar extends StatefulWidget {
 
   /// Index data.
   final List<String> data;
+
+  final tag;
 
   /// IndexBar width(def:30).
   final double width;
@@ -274,9 +277,9 @@ class _IndexBarState extends State<IndexBar> {
 
   double floatTop = 0;
   String indexTag = '';
-  int selectIndex = 0;
+  int selectIndex = 2;
   int action = IndexBarDragDetails.actionEnd;
-
+  String currentTag = '';
   @override
   void initState() {
     super.initState();
@@ -285,6 +288,7 @@ class _IndexBarState extends State<IndexBar> {
   }
 
   void _valueChanged() {
+    print('_valueChanged');
     if (widget.indexBarDragNotifier == null) return;
     IndexBarDragDetails details =
         widget.indexBarDragNotifier!.dragDetails.value;
@@ -311,8 +315,9 @@ class _IndexBarState extends State<IndexBar> {
   }
 
   bool _isActionDown() {
-    return action == IndexBarDragDetails.actionDown ||
-        action == IndexBarDragDetails.actionUpdate;
+    // return action == IndexBarDragDetails.actionDown ||
+    //     action == IndexBarDragDetails.actionUpdate;
+    return true;
   }
 
   @override
@@ -405,11 +410,12 @@ class _IndexBarState extends State<IndexBar> {
     String tag = widget.data[index];
     Decoration? decoration;
     TextStyle? textStyle;
+    print('widget.options:${widget.options}');
     if (widget.options.downItemDecoration != null) {
-      decoration = (_isActionDown() && selectIndex == index)
+      decoration = (selectIndex == index)
           ? widget.options.downItemDecoration
           : null;
-      textStyle = (_isActionDown() && selectIndex == index)
+      textStyle = ( selectIndex == index)
           ? widget.options.downTextStyle
           : widget.options.textStyle;
     } else if (widget.options.selectItemDecoration != null) {
@@ -419,9 +425,8 @@ class _IndexBarState extends State<IndexBar> {
           ? widget.options.selectTextStyle
           : widget.options.textStyle;
     } else {
-      textStyle = _isActionDown()
-          ? (widget.options.downTextStyle ?? widget.options.textStyle)
-          : widget.options.textStyle;
+      textStyle = (widget.options.downTextStyle ?? widget.options.textStyle);
+          
     }
 
     Widget child;
@@ -445,13 +450,27 @@ class _IndexBarState extends State<IndexBar> {
   }
 
   void _updateTagIndex(String tag) {
-    if (_isActionDown()) return;
+    print('widget.data.indexOf(tag):${widget.data.indexOf(tag)}');
+    if (widget.data.indexOf(tag) > 1) {
+      currentTag = tag;
+    }
     selectIndex = widget.data.indexOf(tag);
-    setState(() {});
+    // print();
+    // if (_isActionDown()) return;
+    if (mounted) {
+      if (widget.data.indexOf(tag) == 0) return;
+      selectIndex = widget.data.indexOf(tag);
+      print('tag: $tag selectIndex: $selectIndex');
+      // _triggerDragEvent(IndexBarDragDetails.actionDown);
+      
+      setState(() {});
+    }
+    
   }
 
   @override
   Widget build(BuildContext context) {
+    print(_isActionDown()) ;
     return Container(
       color: _isActionDown() ? widget.options.downColor : widget.options.color,
       decoration: _isActionDown()
@@ -462,6 +481,7 @@ class _IndexBarState extends State<IndexBar> {
       margin: widget.margin,
       alignment: Alignment.center,
       child: BaseIndexBar(
+        tag: currentTag,
         data: widget.data,
         width: widget.width,
         itemHeight: widget.itemHeight,
@@ -478,6 +498,7 @@ class _IndexBarState extends State<IndexBar> {
 class BaseIndexBar extends StatefulWidget {
   BaseIndexBar({
     Key? key,
+    this.tag,
     this.data = kIndexBarData,
     this.width = kIndexBarWidth,
     this.itemHeight = kIndexBarItemHeight,
@@ -486,6 +507,8 @@ class BaseIndexBar extends StatefulWidget {
     this.itemBuilder,
     this.indexBarDragNotifier,
   }) : super(key: key);
+
+  final String? tag;
 
   /// index data.
   final List<String> data;
@@ -546,6 +569,15 @@ class _BaseIndexBarState extends State<BaseIndexBar> {
   }
 
   @override
+  void didUpdateWidget (BaseIndexBar oldWidget) {
+    if (oldWidget.tag != widget.tag) {
+      print(widget.tag);
+      // _triggerDragEvent(2);
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<Widget> children = List.generate(widget.data.length, (index) {
       Widget child = widget.itemBuilder == null
@@ -581,10 +613,10 @@ class _BaseIndexBarState extends State<BaseIndexBar> {
         }
       },
       onVerticalDragEnd: (DragEndDetails details) {
-        _triggerDragEvent(IndexBarDragDetails.actionEnd);
+        // _triggerDragEvent(IndexBarDragDetails.actionEnd);
       },
       onVerticalDragCancel: () {
-        _triggerDragEvent(IndexBarDragDetails.actionCancel);
+        // _triggerDragEvent(IndexBarDragDetails.actionCancel);
       },
       onTapUp: (TapUpDetails details) {
         //_triggerDragEvent(IndexBarDragDetails.actionUp);
