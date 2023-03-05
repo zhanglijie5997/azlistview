@@ -138,6 +138,7 @@ class IndexBarOptions {
     this.localImages = const [],
   });
 
+
   /// need to rebuild.
   final bool needRebuild;
 
@@ -299,7 +300,7 @@ class _IndexBarState extends State<IndexBar> {
         widget.itemHeight / 2 -
         widget.options.indexHintHeight / 2;
 
-    if (_isActionDown()) {
+    if (action <= 2) {
       _addOverlay(context);
     } else {
       _removeOverlay();
@@ -315,6 +316,7 @@ class _IndexBarState extends State<IndexBar> {
   }
 
   bool _isActionDown() {
+    print(action);
     // return action == IndexBarDragDetails.actionDown ||
     //     action == IndexBarDragDetails.actionUpdate;
     return true;
@@ -390,7 +392,7 @@ class _IndexBarState extends State<IndexBar> {
             top: top,
             child: Material(
               color: Colors.transparent,
-              child: _buildIndexHint(ctx, indexTag),
+              child:  _buildIndexHint(ctx, indexTag),
             ));
       });
       overlayState.insert(overlayEntry!);
@@ -536,7 +538,7 @@ class BaseIndexBar extends StatefulWidget {
 class _BaseIndexBarState extends State<BaseIndexBar> {
   int lastIndex = -1;
   int _widgetTop = 0;
-
+  int _indexBarDragDetails = IndexBarDragDetails.actionDown;
   /// get index.
   int _getIndex(double offset) {
     int index = offset ~/ widget.itemHeight;
@@ -550,7 +552,11 @@ class _BaseIndexBarState extends State<BaseIndexBar> {
             action == IndexBarDragDetails.actionUpdate)) {
       HapticFeedback.vibrate();
     }
-    widget.indexBarDragNotifier?.dragDetails?.value = IndexBarDragDetails(
+    _indexBarDragDetails = action;
+    if (action > 2) {
+
+    }
+    widget.indexBarDragNotifier?.dragDetails.value = IndexBarDragDetails(
       action: action,
       index: lastIndex,
       tag: widget.data[lastIndex],
@@ -613,13 +619,13 @@ class _BaseIndexBarState extends State<BaseIndexBar> {
         }
       },
       onVerticalDragEnd: (DragEndDetails details) {
-        // _triggerDragEvent(IndexBarDragDetails.actionEnd);
+        _triggerDragEvent(IndexBarDragDetails.actionEnd);
       },
       onVerticalDragCancel: () {
-        // _triggerDragEvent(IndexBarDragDetails.actionCancel);
+        _triggerDragEvent(IndexBarDragDetails.actionCancel);
       },
       onTapUp: (TapUpDetails details) {
-        //_triggerDragEvent(IndexBarDragDetails.actionUp);
+        _triggerDragEvent(IndexBarDragDetails.actionUp);
       },
       behavior: HitTestBehavior.translucent,
       child: Column(
