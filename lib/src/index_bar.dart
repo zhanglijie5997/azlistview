@@ -278,7 +278,7 @@ class _IndexBarState extends State<IndexBar> {
 
   double floatTop = 0;
   String indexTag = '';
-  int selectIndex = 2;
+  int selectIndex = 1;
   int action = IndexBarDragDetails.actionEnd;
   String currentTag = '';
   @override
@@ -412,7 +412,7 @@ class _IndexBarState extends State<IndexBar> {
     String tag = widget.data[index];
     Decoration? decoration;
     TextStyle? textStyle;
-    print('widget.options:${widget.options}');
+    // print('widget.options:${widget.options}');
     if (widget.options.downItemDecoration != null) {
       decoration = (selectIndex == index)
           ? widget.options.downItemDecoration
@@ -590,7 +590,8 @@ class _BaseIndexBarState extends State<BaseIndexBar> {
           ? Center(
               child: Text('${widget.data[index]}', style: widget.textStyle))
           : widget.itemBuilder!(context, index);
-      return SizedBox(
+      // TODO:
+      return Container(
         width: widget.width,
         height: widget.itemHeight,
         child: child,

@@ -384,7 +384,8 @@ class _ContactsPageState extends State<XDContactse> {
       height: susHeight,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.only(left: 16.0),
-      color: Theme.of(context).primaryColor,
+      color: Colors.red,
+      // color: Theme.of(context).primaryColor,
       alignment: Alignment.centerLeft,
       child: Text(
         '$tag',
@@ -425,7 +426,7 @@ class _ContactsPageState extends State<XDContactse> {
           ignoreDragCancel: true,
           downTextStyle: TextStyle(fontSize: 12, color: Colors.white),
           downItemDecoration:
-              BoxDecoration(shape: BoxShape.circle, color: Colors.green),
+              BoxDecoration(shape: BoxShape.circle, color: Colors.red),
           indexHintWidth: 120 / 2,
           indexHintHeight: 100 / 2,
           indexHintDecoration: BoxDecoration(
